@@ -1,0 +1,204 @@
+<html>
+<head>
+  <meta name="layout" content="_layout/docs.html"/>
+  <#assign metrictypes="active">
+</head>
+<body>
+
+
+
+  <h2>Metric types</h2>
+  <p>
+    There are 4 main types of metrics that are supported.
+  </p>
+  <ul>
+    <li><em>Timers</em> - monitor timed events like method execution time and request processing time.</li>
+    <li><em>Gauges</em> - monitor resources like memory (used, max etc) and threads (active, max etc).</li>
+    <li><em>Counters</em> - monitor discrete events like user login or error logged.</li>
+    <li><em>Value</em> - monitor events that have a value like 'bytes sent' or 'lines processed'.</li>
+  </ul>
+
+  <h5 class="mvm">Quick links: </h5>
+  <ul>
+    <li><a href="#timed">TimedMetic</a></li>
+    <li><a href="#bucket">BucketTimedMetic</a></li>
+    <li><a href="#counter">CounterMetric</a></li>
+    <li><a href="#value">ValueMetric</a></li>
+    <li><a href="#gaugelong">GaugeLongMetric</a></li>
+    <li><a href="#gaugedouble">GaugeDoubleMetric</a></li>
+  </ul>
+
+  <hr/>
+
+  <a class="anchor" name="timed"></a>
+  <h3>TimedMetric</h3>
+  <p>
+    Collects and provides statics for a timed event. Most typically collects execution statistics for a method.
+    TimedMetric has the ability to keep separate statistics for success and error execution. It is generally useful to
+    know which methods are invoking errors and differences in execution time of errors versus successful execution.
+  </p>
+
+  ```java
+  // Declare the metric (typically as a static field)
+
+  static final TimedMetric timedUserLogin = MetricManager.getTimedMetric(MyService.class, "performLogin");
+  ...
+
+  public void performLogin() {
+
+    long startNanos = System.nanoTime();
+
+    try {
+      ...
+
+    } finally {
+      // Add the event to the success statistics
+      timedUserLogin.addEventSince(true, startNanos);
+    }
+  }
+  ```
+
+  <h5>Output example:</h5>
+<pre><code> 23:59:38, tm, org.test.MyService.performLogin, count=1, avg=954, max=954, sum=954, dur=31, err.count=0
+</code></pre>
+
+  <a class="anchor" name="bucket"></a>
+  <h3>BucketTimedMetric</h3>
+
+  <p>
+    Used to collect timed metrics but puts the statistics into millisecond time ranges (buckets).
+  </p>
+
+  <p>
+    In providing millisecond bucket ranges of 200, 400, 600 this will create 4 buckets to put the execution statistics
+    into. The first range will be for all events that take between 0 and 200 milliseconds, the second range will be for
+    all events that take between 200 and 400 milliseconds, the third range will take events that take between 400 and
+    600 milliseconds and the last bucket takes all events that take longer than 600 milliseconds.
+
+  </p>
+
+  <p>
+    The general purpose of using a BucketTimedMetric over a TimedMetric is that it can provide an insight into how the
+    execution times are statistically distributed. For example, a method execution might have 2 paths with one hitting a
+    cache and generally a lot faster. In using 2 or more buckets you might get a more representative view of the 2
+    distinct execution paths and monitor the slow non-cached execution path more accurately.
+  </p>
+
+```java
+  // Declare the metric with 4 bucket ranges of:
+  //    0 - 100 milliseconds
+  //  100 - 200 milliseconds
+  //  200 - 300 milliseconds
+  //  300+      milliseconds
+
+  static final BucketTimedMetric timedUserLogin = MetricManager.getBucketTimedMetric(MyService.class, "performLogin", 100, 200, 300);
+  ...
+
+  public void performLogin() {
+
+    long startNanos = System.nanoTime();
+
+    try {
+    ...
+
+
+    } finally {
+      // Add the event to the success statistics
+      timedUserLogin.addEventSince(true, startNanos);
+    }
+  }
+```
+  <a class="anchor" name="counter"></a>
+  <h3>CounterMetric</h3>
+  <p>
+    Metric based on a counter (long value) that counts discrete events like 'user logged in'.
+  </p>
+```java
+  // Declare the counter (typically as a static field)
+  static final CounterMetric userLoginCounter = MetricManager.getCounterMetric(MyService.class, "userLogin");
+  ...
+
+  public void performUserLogin() {
+
+    // increment the counter
+    userLoginCounter.markEvent();
+    ...
+  }
+```
+  <a class="anchor" name="value"></a>
+  <h3>ValueMetric</h3>
+  <p>
+    Metric used when the event has a value like 'bytes sent' or 'lines processed'.
+  </p>
+  ```java
+
+  // Declare the metric (typically as a static field)
+  static final ValueMetric bytesSentMetric = MetricManager.getValueMetric(MyService.class, "bytesSent");
+  ...
+
+  public void performSomeIO() {
+
+    long bytesSent = ...
+
+    bytesSentMetric.addEvent(bytesSent);
+    ...
+  }
+  ```
+
+  <a class="anchor" name="gaugelong"></a>
+  <h3>GaugeLongMetric</h3>
+  <p>Metric based on an underlying gauge that reports long values.</p>
+```java
+   class ThreadCountGauge implements GaugeLong {
+
+       public long getValue() {
+         return threadMXBean.getThreadCount();
+       }
+     }
+
+   // register the gauge
+   GaugeLongMetric gauge = MetricManager.register("jvm.thread.count", threadCountGauge);
+
+   // Note that typically you register and don't need the returned GaugeLongMetric
+   // instance. The MetricReporter will periodically get the current gauge value.
+```
+
+  <a class="anchor" name="gaugedouble"></a>
+  <h3>GaugeDoubleMetric</h3>
+  <p>
+    Metric based on a gauge returning double values.
+  </p>
+```java
+  class FreeMemoryGauge implements GaugeDouble {
+
+    public double getValue() {
+      return mxBean.getFreeMemory() / mxBean.getTotalMemory();
+    }
+  }
+
+  GaugeDoubleMetric gauge = MetricManager.register("jvm.memory.pctfree", freeMemoryGauge);
+```
+
+  <a class="anchor" name="jvm"></a>
+  <h3>Build in JVM Gauges</h3>
+  <p>
+    Avaje Metrics automatically registers some core jvm gauges for memory, threads, garbage collection,
+    OS load average and system uptime.
+  </p>
+  <h5>Output example:</h5>
+<pre>
+<code>
+  00:00:51, lg, jvm.gc.ps-marksweep, count=4, time=1556
+  00:00:51, lg, jvm.gc.ps-scavenge, count=48, time=6811
+  00:00:51, dg, jvm.memory.heap, pct=23.0, init=61.75, used=210.21, committed=379.5, max=878.5
+  00:00:51, dg, jvm.memory.nonheap, pct=4.0, init=23.44, used=9.12, committed=23.44, max=214.0
+  00:00:51, dm, jvm.os.loadAverage, value=1.17
+  00:00:51, dm, jvm.system.uptime, value=0.0
+  00:00:51, lg, jvm.threads, current=5, peak=5, daemon=4
+</code>
+</pre>
+
+
+
+</body>
+</html>

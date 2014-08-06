@@ -1,0 +1,69 @@
+<html>
+<head>
+<meta name="layout" content="_layout/main.html" />
+<#assign home = "active">
+</head>
+<body>
+
+  <div class="jumbotron">
+    <div class="container">
+      <h1>Avaje Metrics</h1>
+      <h2>Collect Java application metrics in production</h2>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="starter-template">
+      <h2>Version 3.5.0</h2>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-4 feature">
+        <h3>Low overhead</h3>
+
+        <p>To collect metrics in production it is important to keep the overhead low and for the statistical counters to
+          not introduce contention. JSR166e brings us <code>LongAdder</code> and <code>LongMaxUpdater</code> which were
+          built just for this task.</p>
+
+        <p>
+          Avaje Metrics won't introduce contention or blow out your memory.
+        </p>
+
+        <p>
+          <a class="nav-link" href="/quickstart">MORE <span class="glyphicon glyphicon-chevron-right"></span></a>
+        </p>
+      </div>
+
+      <div class="col-sm-4 feature">
+        <h3>Collecting metrics in minutes</h3>
+        <p>An agent is provided so that you can instrument your JVM application without
+          having to write code. Classes annotated with <code>@Singleton</code>, JAX-RS <code>@Path</code> and
+          Spring <code>@Component</code>, <code>@Service</code> etc can be instrumented automatically.
+        </p>
+        <p>
+          Within minutes you can be gathering metrics across all the layers of your application.
+        </p>
+        <p>
+          <a class="nav-link" href="/quickstart">MORE <span class="glyphicon glyphicon-chevron-right"></span></a>
+        </p>
+      </div>
+      <div class="col-sm-4 feature">
+        
+        <h3>Timers, Counters, Gauges</h3>
+        <p>
+
+        </p>
+        <p>
+          <a class="nav-link" href="/quickstart">MORE <span class="glyphicon glyphicon-chevron-right"></span></a>
+        </p>
+      </div>
+    </div>
+    <!-- //end of row -->
+
+  </div>
+  <!-- /.container -->
+
+
+</body>
+</html>
