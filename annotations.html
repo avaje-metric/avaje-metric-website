@@ -1,0 +1,80 @@
+<html>
+<head>
+  <meta name="layout" content="_layout/docs.html"/>
+<#assign subtitle="Annotations">
+<#assign annotations="active">
+</head>
+<body>
+
+<h2>Annotations</h2>
+
+<h5 class="mvm">Quick links: </h5>
+<ul>
+  <li><a href="#timed">@Timed</a></li>
+  <li><a href="#agent">@NotTimed</a></li>
+</ul>
+
+<a class="anchor" name="timed"></a>
+
+<h3>@Timed</h3>
+
+<p>
+  When put on a class means that all public methods of that class will be enhanced with
+  either a <a href="/metrictypes#timed">TimedMetric</a> or <a href="/metrictypes#bucket">BucketTimedMetric</a>.
+</p>
+<h5>Example: Class level</h5>
+
+```java
+package org.example.service;
+  ...
+
+  @Timed
+  public class MyService {
+    ...
+  }
+
+}
+```
+
+<a class="anchor" name="bucket"></a>
+<h5>Example: with bucket ranges</h5>
+<p>
+  Adding some bucket ranges (in milliseconds) means this method will use a <a href="/metrictypes#bucket">BucketTimedMetric</a>.
+</p>
+
+```java
+package org.example.service;
+  ...
+
+  @Timed(buckets={100,200})
+  public class MyService {
+    ...
+  }
+
+}
+```
+
+
+<a class="anchor" name="nottimed"></a>
+
+<h3>@NotTimed</h3>
+
+<p>
+  Can be put on a class or method to explicitly exclude it from being enhanced by the agent.
+</p>
+<h5>Example: Class level</h5>
+
+```java
+package org.example.service;
+...
+
+@Timed
+public class MyService {
+...
+}
+
+}
+```
+
+</body>
+</html>

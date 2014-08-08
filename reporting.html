@@ -8,6 +8,142 @@
 
   <h2>Reporting</h2>
 
+  <h5 class="mvm">Quick links: </h5>
+  <ul>
+    <li><a href="#reportManager">MetricReportManager</a></li>
+    <li><a href="#file">FileReporter</a></li>
+    <li><a href="#metricReporter">MetricReporter interface</a></li>
+
+  </ul>
+
+
+  <a class="anchor" name="reportManager"></a>
+  <h3>MetricReportManager</h3>
+  <p>
+    MetricReportManager is part of <code>avaje-metric-core</code>. What it does is periodically
+    collect the metrics from the MetricManager and send then to any registered reporters.
+    You typically specify the frequency in which metrics should be reported and the reporter(s)
+    to use.
+  </p>
+
+  <p>
+    MetricReportManager can support 2 ReportWriters so if you wish to write the metrics both to the
+    local file system and additionally send them to a remote repository you can do that.
+  </p>
+  <h4>Example: MetricReportManager</h4>
+  ```java
+  import org.avaje.metric.report.FileReporter;
+  import org.avaje.metric.report.MetricReportManager;
+  ...
+
+  // Just use the simple FileReporter that comes with avaje-metric-core.
+  // Writes metrics in a csv format every 60 seconds. Defaults to write a
+  // daily file and keep a maximum of 20 files
+
+  FileReporter file = new FileReporter();
+  MetricReportManager reportManager = new MetricReportManager(60, file);
+  ```
+
+  <a class="anchor" name="file"></a>
+  <h3>FileReporter</h3>
+  <p>
+    FileReporter writes the metrics to the local file system. It will write to a daily file
+    by adding the date into the name of the file it writes to. You can specify the maximum
+    number of files that you want to keep and FileReporter will delete any older metric files
+    automatically.
+  </p>
+
+```java
+
+  /**
+   * Wire up the MetricReportManager with appropriate ReportWriters.
+   */
+  @Singleton
+  public class MetricService {
+
+    static final Logger logger = LoggerFactory.getLogger(MetricService.class);
+
+    final MetricReportManager reportManager;
+
+    @Autowired
+    public MetricService(String directory, String fileName, int freqInSeconds) {
+
+      logger.info("metrics directory:{} file:{} freqInSeconds:{}", directory, fileName, freqInSeconds);
+
+      CsvReportWriter csvReportWriter = new CsvReportWriter();
+
+      // specify the directory to write the metrics to and fileName prefix
+      FileReporter reporter = new FileReporter(directory, fileName, csvReportWriter);
+
+      reportManager = new MetricReportManager(freqInSeconds, reporter);
+    }
+  }
+
+```
+
+  <a class="anchor" name="metricReporter"></a>
+  <h3>MetricReporter interface</h3>
+  <p>
+    You can write your own MetricReporter implementation.
+  </p>
+
+```java
+  package org.avaje.metric.report;
+
+   /**
+    * Defines interface for reporting metrics.
+    *
+    * Construct and then pass the MetricReporter into one
+    * of the constructors for MetricReportManager.
+    */
+    public interface MetricReporter {
+
+   /**
+    * Report the collected metrics. These metrics are all
+    * known to have non-empty values.
+    */
+    public void report(ReportMetrics reportMetrics);
+
+   /**
+    * Perform periodic cleanup of any resources
+    * (e.g. only keep x days of metrics files).
+    *
+    * By default this will be called approximately every 8 hours
+    * and is intended to be used to cleanup old files created by
+    * the likes of FileReporter (only keep x days of metrics files).
+    */
+    public void cleanup();
+
+  }
+```
+
+  <h4>ReportMetrics Bean:</h4>
+  <p>
+    ReportMetrics is a bean that holds the collected metrics, collection time
+    and environment information (Application, Server, Environment etc).
+  </p>
+```java
+
+ /**
+  * This is the environment specific information - Application,
+  * Environment, Server etc.
+  */
+  protected final HeaderInfo headerInfo;
+
+ /**
+  * The time the metrics were collected. This is used to determine
+  * the duration for each metric which is the time since its last collection.
+  */
+  protected final long collectionTime;
+
+ /**
+  * The metrics that were collected that were not empty. Metrics that
+  * didn't have events occur are considered empty and not reported.
+  */
+  protected final List<Metric> metrics;
+
+```
+
 
 </body>
 </html>

@@ -8,7 +8,116 @@
 
   <h2>Components</h2>
 
+  <h5 class="mvm">Quick links: </h5>
+  <ul>
+    <li><a href="#api">API</a></li>
+    <li><a href="#core">Core</a></li>
+    <li><a href="#agent">Agent</a></li>
+    <li><a href="#mavenenhancer">Maven Plugin</a></li>
+    <li><a href="#logback">Logback</a></li>
+  </ul>
 
+  <div class="page-components">
 
+    <a class="anchor" name="api"></a>
+    <h3>API</h3>
+    <p>
+      Provides the public <a href="/apidocs/index.html">API</a> for adding
+      metrics via the <a href="/apidocs/org/avaje/metric/MetricManager.html">MetricManager</a>.
+    </p>
+
+```xml
+<dependency>
+  <groupId>org.avaje.metric</groupId>
+  <artifactId>avaje-metric-api</artifactId>
+  <version>3.5.0</version>
+</dependency>
+```
+
+    <a class="anchor" name="core"></a>
+    <h3>Core</h3>
+    <p>
+      The default implementation of the API. Additionally has
+      <code>MetricReportManager</code> which collects the metrics
+      and sends them to reporters.
+    </p>
+
+```xml
+<dependency>
+  <groupId>org.avaje.metric</groupId>
+  <artifactId>avaje-metric-core</artifactId>
+  <version>3.5.0</version>
+</dependency>
+```
+
+    <a class="anchor" name="agent"></a>
+    <h3>Agent</h3>
+    <p>
+      The enhancement agent. Typically used via the maven plugin.
+    </p>
+
+```xml
+<dependency>
+  <groupId>org.avaje.metric</groupId>
+  <artifactId>avaje-metric-agent</artifactId>
+  <version>3.5.0</version>
+</dependency>
+```
+    <a class="anchor" name="mavenenhancer"></a>
+
+    <h3>Maven Enhancement Plugin</h3>
+    <p>
+      Maven plugin to perform the enhancement.
+    </p>
+
+```xml
+<build>
+  <plugins>
+
+    <plugin>
+      <groupId>org.avaje.metric</groupId>
+      <artifactId>enhance-maven-plugin</artifactId>
+      <version>3.5.0</version>
+      <executions>
+        <execution>
+          <id>main</id>
+          <phase>process-classes</phase>
+          <configuration>
+            <classSource>target/classes</classSource>
+            <packages>org.example.myapp.**</packages>
+            <transformArgs>debug=1</transformArgs>
+          </configuration>
+          <goals>
+            <goal>enhance</goal>
+          </goals>
+        </execution>
+      </executions>
+    </plugin>
+
+  </plugins>
+</build>
+
+```
+
+    <a class="anchor" name="logback"></a>
+    <h3>Logback</h3>
+    <p>
+      Provides a Logback appender that has counters for the number of Error and Warning messages that
+      are logged.
+    </p>
+
+    <a class="anchor" name="cxf"></a>
+    <h3>CXF</h3>
+    <p>
+      Code needs updating.
+    </p>
+
+    <a class="anchor" name="ebean"></a>
+    <h3>EbeanORM</h3>
+    <p>
+      Planned.
+    </p>
+
+  </div>
 </body>
 </html>
