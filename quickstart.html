@@ -17,7 +17,7 @@
   <p>
     Add the following dependency.
   </p>
-
+    <div class="max-700">
 ```xml
     <dependency>
       <groupId>org.avaje.metric</groupId>
@@ -25,6 +25,7 @@
       <version>3.5.0</version>
     </dependency>
 ```
+    </div>
 
     <h2>2. Maven plugin enhancement</h2>
     <p>
@@ -34,7 +35,7 @@
     <p>
       You can also use the Avaje Metrics <code>@Timed</code> annotation.
     </p>
-
+<div class="max-700">
     ```xml
 
     <build>
@@ -64,14 +65,14 @@
     </build>
 
     ```
-
+</div>
 
     <h2>3. Reporting</h2>
     <p>
       Add MetricReporter to your application. This has a Timer that will fire periodically
       and collect the metrics and send then to a reporter.
     </p>
-
+    <div class="max-700">
 ```java
     import org.avaje.metric.report.FileReporter;
     import org.avaje.metric.report.MetricReportManager;
@@ -84,7 +85,7 @@
     FileReporter file = new FileReporter();
     MetricReportManager reportManager = new MetricReportManager(60, file);
 ```
-
+      </div>
 
     <h2>... and you're off</h2>
     <p>
@@ -129,13 +130,13 @@
       Add a file called <code>metric-name-mapping.txt</code> into <code>src/main/resources</code> and
       add some name=value pairs which will be used to truncate/replace part or all of the package name.
     </p>
-
+    <div class="max-700">
 ```properties
 org.example.myapp.endpoint=web.api
 org.example.myapp.repository.dao=dataaccess
 org.example.myapp=myapp
 ```
-
+    </div>
 
 
   </div>
