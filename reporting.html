@@ -11,9 +11,7 @@
   <h5 class="mvm">Quick links: </h5>
   <ul>
     <li><a href="#reportManager">MetricReportManager</a></li>
-    <li><a href="#file">FileReporter</a></li>
     <li><a href="#metricReporter">MetricReporter interface</a></li>
-
   </ul>
 
 
@@ -27,59 +25,25 @@
   </p>
 
   <p>
-    MetricReportManager can support 2 ReportWriters so if you wish to write the metrics both to the
-    local file system and additionally send them to a remote repository you can do that.
+    MetricReportManager can support ReportWriters for reporting the aggregate metrics as well as
+    the 'Per request' timings.
   </p>
   <h4>Example: MetricReportManager</h4>
   ```java
-  import org.avaje.metric.report.FileReporter;
+  import org.avaje.metric.report.MetricReportConfig;
   import org.avaje.metric.report.MetricReportManager;
   ...
 
-  // Just use the simple FileReporter that comes with avaje-metric-core.
+  // Default to using the simple FileReporters that come with avaje-metric-core.
   // Writes metrics in a csv format every 60 seconds. Defaults to write a
   // daily file and keep a maximum of 20 files
 
-  FileReporter file = new FileReporter();
-  MetricReportManager reportManager = new MetricReportManager(60, file);
+  MetricReportConfig config = new MetricReportConfig();
+  config.setFreqInSeconds(60);
+
+  MetricReportManager reportManager = new MetricReportManager(config);
+
   ```
-
-  <a class="anchor" name="file"></a>
-  <h3>FileReporter</h3>
-  <p>
-    FileReporter writes the metrics to the local file system. It will write to a daily file
-    by adding the date into the name of the file it writes to. You can specify the maximum
-    number of files that you want to keep and FileReporter will delete any older metric files
-    automatically.
-  </p>
-
-```java
-
-  /**
-   * Wire up the MetricReportManager with appropriate ReportWriters.
-   */
-  @Singleton
-  public class MetricService {
-
-    static final Logger logger = LoggerFactory.getLogger(MetricService.class);
-
-    final MetricReportManager reportManager;
-
-    @Autowired
-    public MetricService(String directory, String fileName, int freqInSeconds) {
-
-      logger.info("metrics directory:{} file:{} freqInSeconds:{}", directory, fileName, freqInSeconds);
-
-      CsvReportWriter csvReportWriter = new CsvReportWriter();
-
-      // specify the directory to write the metrics to and fileName prefix
-      FileReporter reporter = new FileReporter(directory, fileName, csvReportWriter);
-
-      reportManager = new MetricReportManager(freqInSeconds, reporter);
-    }
-  }
-
-```
 
   <a class="anchor" name="metricReporter"></a>
   <h3>MetricReporter interface</h3>

@@ -46,13 +46,12 @@
     <plugin>
       <groupId>org.avaje.metric</groupId>
       <artifactId>enhance-maven-plugin</artifactId>
-      <version>3.5.0</version>
+      <version>4.2.1</version>
       <executions>
         <execution>
           <id>main</id>
           <phase>process-classes</phase>
           <configuration>
-            <classSource>target/classes</classSource>
             <packages>org.example.myapp.**</packages>
             <transformArgs>debug=1</transformArgs>
           </configuration>
@@ -82,7 +81,7 @@
 <dependency>
   <groupId>org.avaje.metric</groupId>
   <artifactId>avaje-metric-agent</artifactId>
-  <version>3.5.0</version>
+  <version>4.2.1</version>
 </dependency>
 ```
 <p>
@@ -148,12 +147,14 @@ private static void _$initMetrics() {
 <h5>ENHANCE METHODS</h5>
 <p>
   Each timed method is enhanced using the ASM AdviceAdapter. In Java terms it looks
-  something like the below.
+  something like the code below.
 </p>
 ```java
 public void doSomething() {
 
-  // local field to store the start nanos
+  // local variables to store the start nanos
+  // and active status of the 'Per request' timing
+  boolean _$metricActiveThreadContext = _$metric_1.isActiveThreadContext();
   long _$metricStart = System.nanoTime();
   try {
 
@@ -161,12 +162,12 @@ public void doSomething() {
     ...
 
     // opCode is one of the return opcodes;
-    _$metric_1.operationEnd(opCode, _$metricStart);
+    _$metric_1.operationEnd(opCode, _$metricStart, _$metricActiveThreadContext);
 
   } catch (RuntimeException e) {
 
     // opCode = ATHROW;
-    _$metric_1.operationEnd(opCode, _$metricStart);
+    _$metric_1.operationEnd(opCode, _$metricStart, _$metricActiveThreadContext);
     throw e;
   }
 }
@@ -177,6 +178,16 @@ public void doSomething() {
   was as simple and minimalist as possible. In the case where you want to turn off metric collection with enhanced
   code the added bytecode is still executed but the TimedMetric.operationEnd() method is a NOOP.
   The operationEnd() methods do look a little clunky on the API but it serves a reasonable purpose.
+</p>
+<h3>Overhead</h3>
+<p>
+  The overhead of an enhanced method should be in the order of <em>140 nanoseconds</em>.
+  Micro benchmarks are notoriously difficult but I believe 140 nanoseconds to be a good
+  indication of the overhead added by the timed metric enhancement.
+</p>
+<p>
+  For perspective, executing approx 7000 methods with an overhead of 140 nanoseconds
+  would add 1 millisecond to execution time.
 </p>
 </body>
 </html>

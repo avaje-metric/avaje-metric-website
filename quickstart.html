@@ -22,7 +22,7 @@
     <dependency>
       <groupId>org.avaje.metric</groupId>
       <artifactId>avaje-metric-core</artifactId>
-      <version>3.5.0</version>
+      <version>4.4.2</version>
     </dependency>
 ```
     </div>
@@ -44,7 +44,7 @@
         <plugin>
           <groupId>org.avaje.metric</groupId>
           <artifactId>enhance-maven-plugin</artifactId>
-          <version>3.5.0</version>
+          <version>4.2.1</version>
           <executions>
             <execution>
               <id>main</id>
@@ -74,16 +74,20 @@
     </p>
     <div class="max-700">
 ```java
-    import org.avaje.metric.report.FileReporter;
+    import org.avaje.metric.report.MetricReportConfig;
     import org.avaje.metric.report.MetricReportManager;
     ...
 
-    // Just use the simple FileReporter that comes with avaje-metric-core.
-    // Writes metrics in a csv format every 60 seconds. Defaults to write a
-    // daily file and keep a maximum of 20 files
+    // There are default reporters that come with avaje-metric-core.
+    // Defaults to writing metrics in a csv format every 60 seconds.
+    // A daily file is written keeping a maximum of 20 file
 
-    FileReporter file = new FileReporter();
-    MetricReportManager reportManager = new MetricReportManager(60, file);
+    MetricReportConfig config = new MetricReportConfig();
+
+    // report aggregate statistics every 10 seconds
+    config.setFreqInSeconds(10);
+
+    MetricReportManager reportManager = new MetricReportManager(config);
 ```
       </div>
 

@@ -19,6 +19,13 @@
 
   <div class="page-components">
 
+
+    <a class="anchor" name="central"></a>
+    <h3>Maven Central</h3>
+    <p>
+      View the latest dependencies in <a target="_blank" href="http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.avaje.metric%22">Maven central</a>.
+    </p>
+
     <a class="anchor" name="api"></a>
     <h3>API</h3>
     <p>
@@ -30,7 +37,7 @@
 <dependency>
   <groupId>org.avaje.metric</groupId>
   <artifactId>avaje-metric-api</artifactId>
-  <version>3.5.0</version>
+  <version>4.4.0</version>
 </dependency>
 ```
 
@@ -46,7 +53,7 @@
 <dependency>
   <groupId>org.avaje.metric</groupId>
   <artifactId>avaje-metric-core</artifactId>
-  <version>3.5.0</version>
+  <version>4.4.1</version>
 </dependency>
 ```
 
@@ -60,7 +67,7 @@
 <dependency>
   <groupId>org.avaje.metric</groupId>
   <artifactId>avaje-metric-agent</artifactId>
-  <version>3.5.0</version>
+  <version>4.2.1</version>
 </dependency>
 ```
     <a class="anchor" name="mavenenhancer"></a>
@@ -77,13 +84,12 @@
     <plugin>
       <groupId>org.avaje.metric</groupId>
       <artifactId>enhance-maven-plugin</artifactId>
-      <version>3.5.0</version>
+      <version>4.2.1</version>
       <executions>
         <execution>
           <id>main</id>
           <phase>process-classes</phase>
           <configuration>
-            <classSource>target/classes</classSource>
             <packages>org.example.myapp.**</packages>
             <transformArgs>debug=1</transformArgs>
           </configuration>
